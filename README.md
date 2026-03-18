@@ -1,4 +1,4 @@
-# 🐔 GayoFitness ULTRA EXTREMA
+# 🐔 GayoFitness ULTRA EXTREMA DERECHA
 
 [![Estado](https://img.shields.io/badge/Estado-Producción-brightgreen)](https://github.com/) 
 [![Lenguaje](https://img.shields.io/badge/Lenguajes-HTML%20|%20CSS%20|%20JS-orange)](https://developer.mozilla.org/)
