@@ -103,9 +103,7 @@ export default function GymCommunityScreen() {
             <Text style={styles.headerSub}>{entrenamientos.length} rutinas compartidas</Text>
           </View>
           <View style={styles.brandRow}>
-            <View style={styles.logoSquare}>
-              <Text style={{ fontSize: 16 }}>🏋️</Text>
-            </View>
+              <Image source={require('@/assets/images/logo_GayoFitness.png')} style={styles.avatarImage} />
             <Text style={styles.brandName}>GF</Text>
           </View>
         </View>
@@ -171,10 +169,6 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 24, fontWeight: '800', color: '#111827' },
   headerSub: { fontSize: 12, color: '#9ca3af', marginTop: 2, fontWeight: '500' },
   brandRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  logoSquare: {
-    width: 32, height: 32, backgroundColor: '#ef4444',
-    borderRadius: 9, alignItems: 'center', justifyContent: 'center',
-  },
   brandName: { fontSize: 15, fontWeight: '800', color: '#f59e0b' },
   searchBar: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
@@ -219,4 +213,5 @@ const styles = StyleSheet.create({
   ejercicioNombre: { fontSize: 14, fontWeight: '700', color: '#111827' },
   ejercicioMeta: { fontSize: 12, color: '#6b7280', marginTop: 2 },
   ejercicioNotas: { fontSize: 11, color: '#9ca3af', fontStyle: 'italic', marginTop: 2 },
+  avatarImage: { width: 42, height: 42, resizeMode: 'contain' },
 });

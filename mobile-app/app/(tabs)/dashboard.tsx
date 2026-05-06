@@ -14,6 +14,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Animated } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg, { Circle } from 'react-native-svg';
 
 import {
   getLocalUser,
@@ -29,29 +30,48 @@ function caloriasFromPasos(pasos: number, pesoKg: number = 70): number {
 
 function ProgressRing({ percent }: { percent: number }) {
   const SIZE = 120;
-  const BORDER = 10;
+  const STROKE = 10;
+  const RADIUS = (SIZE - STROKE) / 2;
+  const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
   const clamped = Math.min(100, Math.max(0, percent));
+  const offset = CIRCUMFERENCE * (1 - clamped / 100);
+
   return (
     <View style={{ alignItems: 'center', marginBottom: 16 }}>
-      <View
-        style={{
-          width: SIZE,
-          height: SIZE,
-          borderRadius: SIZE / 2,
-          borderWidth: BORDER,
-          borderColor: '#e5e7eb',
-          borderTopColor: '#ef4444',
-          borderRightColor: clamped > 25 ? '#ef4444' : '#e5e7eb',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
+      <Svg width={SIZE} height={SIZE}>
+        {/* Track */}
+        <Circle
+          cx={SIZE / 2}
+          cy={SIZE / 2}
+          r={RADIUS}
+          stroke="#e5e7eb"
+          strokeWidth={STROKE}
+          fill="none"
+        />
+        {/* Progress */}
+        <Circle
+          cx={SIZE / 2}
+          cy={SIZE / 2}
+          r={RADIUS}
+          stroke="#ef4444"
+          strokeWidth={STROKE}
+          fill="none"
+          strokeDasharray={CIRCUMFERENCE}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          rotation="-90"
+          origin={`${SIZE / 2}, ${SIZE / 2}`}
+        />
+      </Svg>
+      {/* Texto centrado sobre el SVG */}
+      <View style={{ position: 'absolute', top: 0, width: SIZE, height: SIZE, alignItems: 'center', justifyContent: 'center' }}>
         <ThemedText style={styles.ringPercent}>{clamped}%</ThemedText>
         <ThemedText style={styles.ringLabel}>completado</ThemedText>
       </View>
     </View>
   );
 }
+
 
 function WeeklyBars({ data }: { data: number[] }) {
   const days = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
