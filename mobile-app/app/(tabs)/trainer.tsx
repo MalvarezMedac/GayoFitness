@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useState, useRef } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -19,6 +20,7 @@ type ChatMessage = {
 };
 
 export default function TrainerScreen() {
+  const insets = useSafeAreaInsets();
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'ai',
@@ -77,23 +79,24 @@ export default function TrainerScreen() {
   return (
     <ThemedView style={styles.screen}>
 
-      {/* HEADER */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
         <View style={styles.headerRow}>
-          <Image
-            source={require('../../assets/images/logo_GayoFitness.png')}
-            style={styles.logo}
-          />
-          <ThemedText type="title" style={styles.headerTitle}>
-            Gayo Fitness
-          </ThemedText>
+          <View style={styles.avatar}>
+            <Image
+              source={require('../../assets/images/logo_GayoFitness.png')}
+              style={styles.avatarImage}
+            />
+          </View>
+          <View style={styles.headerInfo}>
+            <ThemedText style={styles.headerTitle}>Gayo Fitness AI</ThemedText>
+            <View style={styles.onlineRow}>
+              <View style={styles.onlineDot} />
+              <ThemedText style={styles.onlineText}>Activo ahora</ThemedText>
+            </View>
+          </View>
         </View>
-        <ThemedText style={styles.headerSubtitle}>
-          Tu coach fitness personalizado
-        </ThemedText>
       </View>
 
-      {/* CHAT */}
       <ScrollView
         ref={scrollRef}
         style={styles.chatArea}
@@ -108,7 +111,6 @@ export default function TrainerScreen() {
             key={i}
             style={msg.role === 'user' ? styles.userRow : styles.botRow}
           >
-            {/* 🔥 View normal en lugar de ThemedView */}
             <View
               style={[
                 styles.bubble,
@@ -133,12 +135,12 @@ export default function TrainerScreen() {
         )}
       </ScrollView>
 
-      {/* INPUT */}
-      <View style={styles.chatInputBar}>
+      <View style={[styles.chatInputBar, { bottom: 70 + insets.bottom }]}>
         <TextInput
           value={chatInput}
           onChangeText={setChatInput}
           placeholder="Pregúntame algo..."
+          placeholderTextColor="#9ca3af"
           style={styles.chatInput}
           onSubmitEditing={handleChatSend}
           returnKeyType="send"
@@ -154,14 +156,27 @@ export default function TrainerScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#f0f2f5' },
+
   header: {
-    paddingTop: 18, paddingHorizontal: 16, paddingBottom: 12,
-    backgroundColor: '#ffffff', borderBottomWidth: 1, borderBottomColor: '#e5e7eb',
+    paddingHorizontal: 16, paddingBottom: 14,
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 1, borderBottomColor: '#e5e7eb',
   },
-  headerRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  logo: { width: 90, height: 90 },
-  headerTitle: { fontSize: 22, fontWeight: '800', color: '#111827' },
-  headerSubtitle: { color: '#9ca3af', marginTop: 2, fontSize: 13, fontWeight: '500' },
+  headerRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  avatar: {
+    width: 42, height: 42,
+    backgroundColor: '#ef4444',
+    borderRadius: 13,
+    alignItems: 'center', justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  avatarImage: { width: 42, height: 42, resizeMode: 'contain' },
+  headerInfo: { flex: 1 },
+  headerTitle: { fontSize: 16, fontWeight: '800', color: '#111827' },
+  onlineRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 2 },
+  onlineDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: '#22c55e' },
+  onlineText: { fontSize: 12, color: '#22c55e', fontWeight: '600' },
+
   chatArea: { flex: 1 },
   chatContent: { padding: 14, paddingBottom: 160 },
   botRow: { alignItems: 'flex-start', marginBottom: 12 },
@@ -174,7 +189,7 @@ const styles = StyleSheet.create({
   chatInputBar: {
     flexDirection: 'row', padding: 10,
     backgroundColor: '#ffffff', borderTopWidth: 1, borderTopColor: '#e5e7eb',
-    position: 'absolute' as any, bottom: 70, left: 0, right: 0,
+    position: 'absolute' as any, left: 0, right: 0,
   },
   chatInput: {
     flex: 1, backgroundColor: '#f3f4f6', borderRadius: 12,

@@ -3,6 +3,7 @@ import {
   Image, TextInput, ScrollView, ActivityIndicator,
 } from 'react-native';
 import { useState, useEffect } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedView } from '@/components/themed-view';
 import { getEntrenamientos, Entrenamiento } from '@/services/api';
 
@@ -22,7 +23,7 @@ function EntrenamientoCommunityCard({ item }: { item: Entrenamiento }) {
         <Image source={{ uri: item.imagen }} style={styles.cardImage} resizeMode="cover" />
       ) : (
         <View style={[styles.cardImage, styles.cardImgPlaceholder]}>
-          <Text style={{ fontSize: 48 }}>{CAT_EMOJI[item.categoria] ?? '🏋️'}</Text>
+          <Text style={{ fontSize: 42 }}>{CAT_EMOJI[item.categoria] ?? '🏋️'}</Text>
         </View>
       )}
       <View style={styles.cardBody}>
@@ -72,6 +73,7 @@ function EntrenamientoCommunityCard({ item }: { item: Entrenamiento }) {
 }
 
 export default function GymCommunityScreen() {
+  const insets = useSafeAreaInsets();
   const [entrenamientos, setEntrenamientos] = useState<Entrenamiento[]>([]);
   const [loading, setLoading] = useState(true);
   const [search,  setSearch]  = useState('');
@@ -94,9 +96,19 @@ export default function GymCommunityScreen() {
 
   return (
     <ThemedView style={styles.screen}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Rutinas comunidad 🏋️</Text>
-        <Text style={styles.headerSub}>{entrenamientos.length} rutinas compartidas</Text>
+      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
+        <View style={styles.headerTop}>
+          <View>
+            <Text style={styles.headerTitle}>Comunidad</Text>
+            <Text style={styles.headerSub}>{entrenamientos.length} rutinas compartidas</Text>
+          </View>
+          <View style={styles.brandRow}>
+            <View style={styles.logoSquare}>
+              <Text style={{ fontSize: 16 }}>🏋️</Text>
+            </View>
+            <Text style={styles.brandName}>GF</Text>
+          </View>
+        </View>
 
         <View style={styles.searchBar}>
           <Text>🔍</Text>
@@ -149,11 +161,21 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#f2f4f7' },
   header: {
     backgroundColor: '#fff', paddingHorizontal: 16,
-    paddingTop: 20, paddingBottom: 12,
+    paddingBottom: 12,
     shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 6, elevation: 3,
   },
+  headerTop: {
+    flexDirection: 'row', justifyContent: 'space-between',
+    alignItems: 'flex-start', marginBottom: 12,
+  },
   headerTitle: { fontSize: 24, fontWeight: '800', color: '#111827' },
-  headerSub: { fontSize: 12, color: '#9ca3af', marginBottom: 10, fontWeight: '500' },
+  headerSub: { fontSize: 12, color: '#9ca3af', marginTop: 2, fontWeight: '500' },
+  brandRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  logoSquare: {
+    width: 32, height: 32, backgroundColor: '#ef4444',
+    borderRadius: 9, alignItems: 'center', justifyContent: 'center',
+  },
+  brandName: { fontSize: 15, fontWeight: '800', color: '#f59e0b' },
   searchBar: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
     backgroundColor: '#f2f4f7', borderRadius: 12,

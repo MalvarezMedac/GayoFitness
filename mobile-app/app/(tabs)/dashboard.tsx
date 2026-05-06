@@ -13,6 +13,7 @@ import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Animated } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
   getLocalUser,
@@ -22,12 +23,10 @@ import {
   saveTodayProgress,
 } from '@/services/api';
 
-// Calorías quemadas según pasos (fórmula estándar)
 function caloriasFromPasos(pasos: number, pesoKg: number = 70): number {
   return Math.round(pasos * 0.0005 * pesoKg);
 }
 
-// 🔴 PROGRESS RING
 function ProgressRing({ percent }: { percent: number }) {
   const SIZE = 120;
   const BORDER = 10;
@@ -54,7 +53,6 @@ function ProgressRing({ percent }: { percent: number }) {
   );
 }
 
-// 🔴 WEEKLY BARS
 function WeeklyBars({ data }: { data: number[] }) {
   const days = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
   const values = data.length ? data : [0, 0, 0, 0, 0, 0, 0];
@@ -98,7 +96,6 @@ function WeeklyBars({ data }: { data: number[] }) {
   );
 }
 
-// 🔴 STAT BOX
 function StatBox({ icon, value, label }: { icon: string; value: string; label: string }) {
   return (
     <View style={styles.statBox}>
@@ -109,7 +106,6 @@ function StatBox({ icon, value, label }: { icon: string; value: string; label: s
   );
 }
 
-// 🔴 QUICK CARD
 function QuickCard({ icon, label, onPress }: { icon: string; label: string; onPress: () => void }) {
   return (
     <TouchableOpacity style={styles.quickCard} onPress={onPress}>
@@ -119,7 +115,6 @@ function QuickCard({ icon, label, onPress }: { icon: string; label: string; onPr
   );
 }
 
-// 🔴 RECOMMEND CARD
 function RecommendCard({ item }: { item: any }) {
   return (
     <View style={styles.recommendCard}>
@@ -133,16 +128,15 @@ function RecommendCard({ item }: { item: any }) {
   );
 }
 
-// 🔥 DASHBOARD PRINCIPAL
 export default function Dashboard() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   const [user, setUser]                   = useState<any>({ name: '', goal: '', peso: 70 });
   const [todayStats, setTodayStats]       = useState<any>({ calorias: 0, pasos: 0, minutosActivos: 0, porcentaje: 0 });
   const [weeklyStats, setWeeklyStats]     = useState<number[]>([]);
   const [recommendations, setRecommendations] = useState<any[]>([]);
 
-  // Modal de pasos
   const [showStepsModal, setShowStepsModal] = useState(false);
   const [inputPasos, setInputPasos]         = useState('');
   const [saving, setSaving]                 = useState(false);
@@ -177,7 +171,6 @@ export default function Dashboard() {
     try {
       const pesoKg    = user?.peso ?? 70;
       const calorias  = caloriasFromPasos(pasos, pesoKg);
-      // Progreso: 10.000 pasos = 100%
       const porcentaje = Math.min(100, Math.round((pasos / 10000) * 100));
 
       await saveTodayProgress({ pasos, calorias, porcentaje });
@@ -194,15 +187,13 @@ export default function Dashboard() {
 
   return (
     <ThemedView style={styles.screen}>
-      {/* HEADER */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
         <ThemedText style={styles.greeting}>¡Buenos días,</ThemedText>
         <ThemedText style={styles.name}>{user.name}</ThemedText>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
 
-        {/* ACTIVIDAD */}
         <View style={styles.card}>
           <View style={styles.rowBetween}>
             <ThemedText style={styles.cardTitle}>Actividad diaria</ThemedText>
@@ -224,7 +215,6 @@ export default function Dashboard() {
             <StatBox icon="⏱" value={String(todayStats?.minutosActivos ?? 0)} label="activo" />
           </View>
 
-          {/* Info calorías */}
           {(todayStats?.pasos ?? 0) > 0 && (
             <View style={styles.caloriasBanner}>
               <ThemedText style={styles.caloriasBannerText}>
@@ -234,13 +224,11 @@ export default function Dashboard() {
           )}
         </View>
 
-        {/* WEEKLY */}
         <View style={styles.card}>
           <ThemedText style={styles.cardTitle}>Progreso semanal</ThemedText>
           <WeeklyBars data={weeklyStats} />
         </View>
 
-        {/* QUICK */}
         <View style={styles.card}>
           <ThemedText style={styles.cardTitle}>Acceso rápido</ThemedText>
           <View style={styles.quickGrid}>
@@ -250,7 +238,6 @@ export default function Dashboard() {
           </View>
         </View>
 
-        {/* RECOMMEND */}
         <View style={styles.card}>
           <ThemedText style={styles.cardTitle}>Recomendado para ti</ThemedText>
           <ScrollView horizontal>
@@ -262,7 +249,6 @@ export default function Dashboard() {
 
       </ScrollView>
 
-      {/* MODAL PASOS */}
       <Modal
         visible={showStepsModal}
         transparent
@@ -286,7 +272,6 @@ export default function Dashboard() {
               autoFocus
             />
 
-            {/* Preview calorías */}
             {inputPasos !== '' && !isNaN(parseInt(inputPasos, 10)) && (
               <View style={styles.previewBox}>
                 <ThemedText style={styles.previewText}>
@@ -327,7 +312,13 @@ export default function Dashboard() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#f2f4f7' },
-  header: { paddingHorizontal: 20, paddingTop: 24, paddingBottom: 10, backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#e5e7eb' },
+  header: {
+    paddingHorizontal: 20,
+    paddingBottom: 10,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  },
   greeting: { fontSize: 14, color: '#9ca3af', fontWeight: '500' },
   name: { fontSize: 24, fontWeight: '700', marginTop: 2, color: '#111827' },
   content: { padding: 16, paddingBottom: 20, gap: 14 },
@@ -346,11 +337,9 @@ const styles = StyleSheet.create({
   },
   stepsBtnText: { color: '#ef4444', fontSize: 12, fontWeight: '700' },
 
-  // Anillo
   ringPercent: { fontSize: 28, fontWeight: '800', color: '#ef4444' },
   ringLabel: { fontSize: 12, color: '#9ca3af', marginTop: 2, fontWeight: '500' },
 
-  // Stats
   statsRow: { flexDirection: 'row', alignItems: 'center', marginTop: 4 },
   statBox: { flex: 1, alignItems: 'center', paddingVertical: 12, backgroundColor: '#f8fafc', borderRadius: 12 },
   statDivider: { width: 8 },
@@ -358,14 +347,12 @@ const styles = StyleSheet.create({
   statNumber: { fontSize: 18, fontWeight: '700', color: '#111827' },
   statLabel: { fontSize: 11, color: '#6b7280', marginTop: 2, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5 },
 
-  // Banner calorías
   caloriasBanner: {
     marginTop: 12, backgroundColor: '#fff7ed', borderRadius: 10,
     padding: 10, alignItems: 'center', borderWidth: 1, borderColor: '#fed7aa',
   },
   caloriasBannerText: { color: '#ea580c', fontSize: 13, fontWeight: '700' },
 
-  // Barras semanales
   barValue: { fontSize: 11, marginBottom: 4, color: '#6b7280', fontWeight: '600' },
   barContainer: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end',
@@ -382,13 +369,11 @@ const styles = StyleSheet.create({
   barLabel: { fontSize: 12, color: '#9ca3af', fontWeight: '500' },
   barLabelActive: { color: '#ef4444', fontWeight: '700' },
 
-  // Acceso rápido
   quickGrid: { flexDirection: 'row', gap: 10 },
   quickCard: { flex: 1, backgroundColor: '#f8fafc', borderRadius: 12, padding: 16, alignItems: 'center', gap: 8, borderWidth: 1, borderColor: '#e5e7eb' },
   quickIcon: { fontSize: 28 },
   quickText: { fontSize: 12, textAlign: 'center', color: '#374151', fontWeight: '600' },
 
-  // Recomendaciones
   recommendCard: { width: 180, marginRight: 12 },
   recommendImagePlaceholder: {
     height: 120, borderRadius: 12, backgroundColor: '#f1f5f9',
@@ -399,7 +384,6 @@ const styles = StyleSheet.create({
   recommendTitle: { fontSize: 13, fontWeight: '700', marginBottom: 2, color: '#111827' },
   recommendKcal: { fontSize: 12, color: '#6b7280', fontWeight: '500' },
 
-  // Modal
   modalOverlay: {
     flex: 1, backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'flex-end',
