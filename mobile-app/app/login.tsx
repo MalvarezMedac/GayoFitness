@@ -22,18 +22,15 @@ export default function LoginScreen() {
     peso: '', altura: '', edad: '', goal: 'ganar_musculo',
   });
 
-  // Errores por campo
   const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
 
   const set = (k: string, v: string) => {
     setForm((p) => ({ ...p, [k]: v }));
-    // Limpia el error del campo al escribir
     setErrors((p) => ({ ...p, [k]: undefined }));
   };
 
   const handleSubmit = async () => {
     setErrors({});
-
     if (!form.email) return setErrors({ email: 'Introduce tu correo' });
     if (!form.password) return setErrors({ password: 'Introduce tu contraseña' });
 
@@ -55,9 +52,7 @@ export default function LoginScreen() {
       }
       router.replace('/(tabs)/dashboard');
     } catch (err: any) {
-      // El backend devuelve { field, error } para errores de login
       const msg: string = err.message ?? 'Error desconocido';
-
       if (msg.includes('correo') || msg.includes('email') || msg.includes('registrado')) {
         setErrors({ email: msg });
       } else if (msg.includes('contraseña') || msg.includes('password')) {
@@ -95,7 +90,6 @@ export default function LoginScreen() {
             </View>
             <TextInput style={styles.input} placeholder="Edad" placeholderTextColor="#9ca3af"
               keyboardType="numeric" value={form.edad} onChangeText={(v) => set('edad', v)} />
-
             <ThemedText style={styles.label}>Objetivo</ThemedText>
             <View style={styles.goals}>
               {GOALS.map((g) => (
@@ -111,7 +105,6 @@ export default function LoginScreen() {
           </>
         )}
 
-        {/* Email */}
         <TextInput
           style={[styles.input, errors.email && styles.inputError]}
           placeholder="Email"
@@ -123,7 +116,6 @@ export default function LoginScreen() {
         />
         {errors.email && <Text style={styles.errorText}>⚠️ {errors.email}</Text>}
 
-        {/* Password */}
         <TextInput
           style={[styles.input, errors.password && styles.inputError]}
           placeholder="Contraseña"
@@ -134,7 +126,6 @@ export default function LoginScreen() {
         />
         {errors.password && <Text style={styles.errorText}>⚠️ {errors.password}</Text>}
 
-        {/* Error general */}
         {errors.general && <Text style={styles.errorText}>⚠️ {errors.general}</Text>}
 
         <TouchableOpacity style={[styles.btn, loading && { opacity: 0.6 }]}
@@ -169,7 +160,6 @@ const styles = StyleSheet.create({
   label: { fontSize: 13, color: '#6b7280' },
   row: { flexDirection: 'row', gap: 8 },
   half: { flex: 1 },
-
   input: {
     backgroundColor: '#fff', borderRadius: 12,
     paddingHorizontal: 16, paddingVertical: 13,
@@ -184,16 +174,14 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginTop: -6,
   },
-
   goals: { flexDirection: 'row', gap: 8 },
   goalBtn: {
     flex: 1, padding: 10, borderRadius: 10, backgroundColor: '#fff',
-    borderWidth: 1, borderColor: '#e5e7eb', alignItems: 'center'
+    borderWidth: 1, borderColor: '#e5e7eb', alignItems: 'center',
   },
   goalActive: { backgroundColor: '#ef4444', borderColor: '#ef4444' },
   goalOn: { color: '#fff', fontWeight: '700', fontSize: 12 },
   goalOff: { color: '#374151', fontSize: 12 },
-
   btn: {
     backgroundColor: '#ef4444', borderRadius: 14,
     padding: 16, alignItems: 'center', marginTop: 4,
