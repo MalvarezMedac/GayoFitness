@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { getProfile, updateProfile, logoutUser, deleteAccount, User } from '@/services/api';
@@ -15,7 +16,8 @@ const GOALS = [
 ];
 
 export default function ProfileScreen() {
-  const router              = useRouter();
+  const router    = useRouter();
+  const insets    = useSafeAreaInsets();
   const [user, setUser]             = useState<User | null>(null);
   const [saving, setSaving]         = useState(false);
   const [deleting, setDeleting]     = useState(false);
@@ -87,7 +89,6 @@ export default function ProfileScreen() {
 
   const set = (k: string, v: string) => setForm((p) => ({ ...p, [k]: v }));
 
-  // CAMBIO: iniciales del usuario para el avatar
   const getInitials = (name: string) => {
     if (!name) return '?';
     const parts = name.trim().split(' ');
@@ -101,8 +102,7 @@ export default function ProfileScreen() {
     <ThemedView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.inner}>
 
-        {/* CAMBIO: header con avatar prominente */}
-        <View style={styles.profileHeader}>
+        <View style={[styles.profileHeader, { paddingTop: insets.top + 20 }]}>
           <View style={styles.avatarCircle}>
             <ThemedText style={styles.avatarText}>
               {getInitials(form.name || user.name || '')}
@@ -214,10 +214,8 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   inner: { paddingBottom: 40, gap: 4 },
 
-  // CAMBIO: sección de cabecera con avatar prominente
   profileHeader: {
     alignItems: 'center',
-    paddingTop: 40,
     paddingBottom: 24,
     paddingHorizontal: 20,
     backgroundColor: '#fff',

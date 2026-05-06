@@ -3,6 +3,7 @@ import {
   Image, TextInput, ScrollView, ActivityIndicator,
 } from 'react-native';
 import { useState, useEffect } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedView } from '@/components/themed-view';
 import { getRecetas, Receta } from '@/services/api';
 
@@ -24,7 +25,6 @@ function RecetaCommunityCard({ item }: { item: Receta }) {
       )}
 
       <View style={styles.cardBody}>
-        {/* Categoría + autor */}
         <View style={styles.cardTop}>
           <View style={styles.catChip}>
             <Text style={styles.catChipText}>{CAT_EMOJI[item.categoria]} {item.categoria}</Text>
@@ -32,13 +32,9 @@ function RecetaCommunityCard({ item }: { item: Receta }) {
           <Text style={styles.autorText}>👤 {item.autorNombre}</Text>
         </View>
 
-        {/* Título */}
         <Text style={styles.cardTitle}>{item.titulo}</Text>
-
-        {/* Calorías */}
         <Text style={styles.cardCal}>🔥 {item.calorias} kcal</Text>
 
-        {/* Ingredientes expandibles */}
         <TouchableOpacity onPress={() => setExpanded(e => !e)} style={styles.expandBtn}>
           <Text style={styles.expandBtnText}>
             {expanded ? '▲ Ocultar ingredientes' : `▼ Ver ${item.ingredientes.length} ingredientes`}
@@ -64,6 +60,7 @@ function RecetaCommunityCard({ item }: { item: Receta }) {
 }
 
 export default function CommunityScreen() {
+  const insets = useSafeAreaInsets();
   const [recetas, setRecetas]   = useState<Receta[]>([]);
   const [loading, setLoading]   = useState(true);
   const [search, setSearch]     = useState('');
@@ -88,12 +85,10 @@ export default function CommunityScreen() {
 
   return (
     <ThemedView style={styles.screen}>
-      {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
         <Text style={styles.headerTitle}>Comunidad 🌍</Text>
         <Text style={styles.headerSub}>{recetas.length} recetas compartidas</Text>
 
-        {/* Buscador */}
         <View style={styles.searchBar}>
           <Text>🔍</Text>
           <TextInput
@@ -110,7 +105,6 @@ export default function CommunityScreen() {
           )}
         </View>
 
-        {/* Filtros */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filtrosRow}>
           {FILTROS.map(f => (
             <TouchableOpacity key={f}
@@ -147,7 +141,7 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#f2f4f7' },
   header: {
     backgroundColor: '#fff', paddingHorizontal: 16,
-    paddingTop: 20, paddingBottom: 12,
+    paddingBottom: 12,
     shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 6, elevation: 3,
   },
   headerTitle: { fontSize: 24, fontWeight: '800', color: '#111827' },

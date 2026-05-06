@@ -3,6 +3,7 @@ import {
   Modal, TextInput, ScrollView, Alert, Image, ActivityIndicator,
 } from 'react-native';
 import { useState, useEffect } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedView } from '@/components/themed-view';
 import { getMisRecetas, crearReceta, eliminarReceta, Receta } from '@/services/api';
 
@@ -55,12 +56,12 @@ function RecetaCard({ item, onDelete }: { item: Receta; onDelete: (id: string) =
 }
 
 export default function RecipesScreen() {
+  const insets = useSafeAreaInsets();
   const [recetas, setRecetas]       = useState<Receta[]>([]);
   const [loading, setLoading]       = useState(true);
   const [showModal, setShowModal]   = useState(false);
   const [saving, setSaving]         = useState(false);
 
-  // Form fields
   const [titulo, setTitulo]           = useState('');
   const [calorias, setCalorias]       = useState('');
   const [imagen, setImagen]           = useState('');
@@ -131,8 +132,7 @@ export default function RecipesScreen() {
 
   return (
     <ThemedView style={styles.screen}>
-      {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
         <Text style={styles.headerTitle}>Mis recetas</Text>
         <TouchableOpacity style={styles.addBtn} onPress={() => setShowModal(true)}>
           <Text style={styles.addBtnText}>+ Nueva</Text>
@@ -158,7 +158,6 @@ export default function RecipesScreen() {
         />
       )}
 
-      {/* MODAL NUEVA RECETA */}
       <Modal visible={showModal} animationType="slide" onRequestClose={() => setShowModal(false)}>
         <View style={styles.modalScreen}>
           <View style={styles.modalHeader}>
@@ -241,7 +240,7 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#f2f4f7' },
   header: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    backgroundColor: '#fff', paddingHorizontal: 16, paddingTop: 20, paddingBottom: 14,
+    backgroundColor: '#fff', paddingHorizontal: 16, paddingBottom: 14,
     shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 6, elevation: 3,
   },
   headerTitle: { fontSize: 24, fontWeight: '800', color: '#111827' },

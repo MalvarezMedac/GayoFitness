@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useState, useRef } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -19,6 +20,7 @@ type ChatMessage = {
 };
 
 export default function TrainerScreen() {
+  const insets = useSafeAreaInsets();
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'ai',
@@ -77,10 +79,8 @@ export default function TrainerScreen() {
   return (
     <ThemedView style={styles.screen}>
 
-      {/* CAMBIO: header estilo "contacto de chat" compacto */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
         <View style={styles.headerRow}>
-          {/* Avatar compacto en lugar del logo grande 90x90 */}
           <View style={styles.avatar}>
             <Image
               source={require('../../assets/images/logo_GayoFitness.png')}
@@ -89,7 +89,6 @@ export default function TrainerScreen() {
           </View>
           <View style={styles.headerInfo}>
             <ThemedText style={styles.headerTitle}>Gayo Fitness AI</ThemedText>
-            {/* CAMBIO: indicador de estado "online" */}
             <View style={styles.onlineRow}>
               <View style={styles.onlineDot} />
               <ThemedText style={styles.onlineText}>Activo ahora</ThemedText>
@@ -98,7 +97,6 @@ export default function TrainerScreen() {
         </View>
       </View>
 
-      {/* CHAT */}
       <ScrollView
         ref={scrollRef}
         style={styles.chatArea}
@@ -137,8 +135,7 @@ export default function TrainerScreen() {
         )}
       </ScrollView>
 
-      {/* INPUT */}
-      <View style={styles.chatInputBar}>
+      <View style={[styles.chatInputBar, { bottom: 70 + insets.bottom }]}>
         <TextInput
           value={chatInput}
           onChangeText={setChatInput}
@@ -160,14 +157,12 @@ export default function TrainerScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#f0f2f5' },
 
-  // CAMBIO: header compacto estilo app de mensajería
   header: {
-    paddingTop: 18, paddingHorizontal: 16, paddingBottom: 14,
+    paddingHorizontal: 16, paddingBottom: 14,
     backgroundColor: '#ffffff',
     borderBottomWidth: 1, borderBottomColor: '#e5e7eb',
   },
   headerRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  // CAMBIO: avatar cuadrado redondeado compacto en lugar de 90x90
   avatar: {
     width: 42, height: 42,
     backgroundColor: '#ef4444',
@@ -178,7 +173,6 @@ const styles = StyleSheet.create({
   avatarImage: { width: 42, height: 42, resizeMode: 'contain' },
   headerInfo: { flex: 1 },
   headerTitle: { fontSize: 16, fontWeight: '800', color: '#111827' },
-  // CAMBIO: fila con punto verde + texto "Activo ahora"
   onlineRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 2 },
   onlineDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: '#22c55e' },
   onlineText: { fontSize: 12, color: '#22c55e', fontWeight: '600' },
@@ -195,7 +189,7 @@ const styles = StyleSheet.create({
   chatInputBar: {
     flexDirection: 'row', padding: 10,
     backgroundColor: '#ffffff', borderTopWidth: 1, borderTopColor: '#e5e7eb',
-    position: 'absolute' as any, bottom: 70, left: 0, right: 0,
+    position: 'absolute' as any, left: 0, right: 0,
   },
   chatInput: {
     flex: 1, backgroundColor: '#f3f4f6', borderRadius: 12,

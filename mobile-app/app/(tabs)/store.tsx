@@ -3,6 +3,7 @@ import {
   TextInput, ScrollView, Modal,
 } from 'react-native';
 import { useState, useEffect } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { API_BASE } from '@/config/api.config';
 
 const API = `${API_BASE}/products`;
@@ -44,7 +45,6 @@ function PuntuacionBar({ value }: { value: number }) {
 function ProductCard({ item, onToggleCart, inCart, cantidad, onToggleFav, isFav }: any) {
   return (
     <View style={styles.card}>
-      {/* CAMBIO: botón de favorito más visible con fondo circular */}
       <TouchableOpacity style={styles.heartBtn} onPress={() => onToggleFav(item.id)}>
         <View style={[styles.heartBg, isFav && styles.heartBgActive]}>
           <Text style={[styles.heartIcon, isFav && styles.heartIconActive]}>
@@ -85,7 +85,6 @@ function ProductCard({ item, onToggleCart, inCart, cantidad, onToggleFav, isFav 
   );
 }
 
-// ── MODAL CARRITO ──────────────────────────────────────────────────
 function CartModal({ visible, items, onClose, onCambiarCantidad, onVaciar }: {
   visible: boolean;
   items: CartItem[];
@@ -231,8 +230,8 @@ function CartModal({ visible, items, onClose, onCambiarCantidad, onVaciar }: {
   );
 }
 
-// ── TIENDA PRINCIPAL ───────────────────────────────────────────────
 export default function Store() {
+  const insets = useSafeAreaInsets();
   const [products, setProducts]             = useState<Product[]>([]);
   const [search, setSearch]                 = useState('');
   const [activeCategory, setActiveCategory] = useState('Todos');
@@ -291,14 +290,12 @@ export default function Store() {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.header}>
-        {/* CAMBIO: header consistente con el resto de pantallas */}
+      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
         <View style={styles.headerTop}>
           <View>
             <Text style={styles.headerTitle}>Tienda</Text>
             <Text style={styles.headerSub}>{products.length} productos disponibles</Text>
           </View>
-          {/* CAMBIO: carrito con badge mejorado */}
           <TouchableOpacity style={styles.cartBtn} onPress={() => setShowCart(true)}>
             <Text style={styles.cartIcon}>🛒</Text>
             {totalUnidades > 0 && (
@@ -382,10 +379,9 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#f2f4f7' },
   header: {
     backgroundColor: '#fff', paddingHorizontal: 16,
-    paddingTop: 20, paddingBottom: 12,
+    paddingBottom: 12,
     shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 6, elevation: 3,
   },
-  // CAMBIO: headerTop con subtítulo de conteo de productos
   headerTop: {
     flexDirection: 'row', justifyContent: 'space-between',
     alignItems: 'flex-start', marginBottom: 12,
@@ -423,7 +419,6 @@ const styles = StyleSheet.create({
     shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 8,
     elevation: 2, position: 'relative',
   },
-  // CAMBIO: botón favorito con fondo circular
   heartBtn: { position: 'absolute', top: 10, right: 10, zIndex: 1 },
   heartBg: {
     width: 30, height: 30, borderRadius: 15,

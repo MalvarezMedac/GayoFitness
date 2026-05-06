@@ -1,9 +1,10 @@
 import {
   View, TextInput, TouchableOpacity,
-  StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Text, Image,
+  StyleSheet, ScrollView, Text, Image,
 } from 'react-native';
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/themed-text';
 import { loginUser, registerUser } from '@/services/api';
 
@@ -15,6 +16,7 @@ const GOALS = [
 
 export default function LoginScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -66,8 +68,8 @@ export default function LoginScreen() {
   };
 
   return (
-    <KeyboardAvoidingView style={styles.screen} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <ScrollView contentContainerStyle={styles.inner}>
+    <View style={styles.screen}>
+      <ScrollView contentContainerStyle={[styles.inner, { paddingTop: insets.top + 40 }]}>
         <View style={styles.header}>
           <Image source={require('@/assets/images/logo_GayoFitness.png')} style={styles.logo} />
           <ThemedText style={styles.companyName}>GayoFitness</ThemedText>
@@ -141,13 +143,13 @@ export default function LoginScreen() {
           </ThemedText>
         </TouchableOpacity>
       </ScrollView>
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#f2f4f7' },
-  inner: { padding: 24, paddingTop: 80, gap: 12 },
+  inner: { padding: 24, gap: 12 },
   header: {
     flexDirection: 'row',
     alignItems: 'center',

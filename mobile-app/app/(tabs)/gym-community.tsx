@@ -3,6 +3,7 @@ import {
   Image, TextInput, ScrollView, ActivityIndicator,
 } from 'react-native';
 import { useState, useEffect } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedView } from '@/components/themed-view';
 import { getEntrenamientos, Entrenamiento } from '@/services/api';
 
@@ -72,6 +73,7 @@ function EntrenamientoCommunityCard({ item }: { item: Entrenamiento }) {
 }
 
 export default function GymCommunityScreen() {
+  const insets = useSafeAreaInsets();
   const [entrenamientos, setEntrenamientos] = useState<Entrenamiento[]>([]);
   const [loading, setLoading] = useState(true);
   const [search,  setSearch]  = useState('');
@@ -94,8 +96,7 @@ export default function GymCommunityScreen() {
 
   return (
     <ThemedView style={styles.screen}>
-      <View style={styles.header}>
-        {/* CAMBIO: título a la izquierda, logo+marca a la derecha */}
+      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
         <View style={styles.headerTop}>
           <View>
             <Text style={styles.headerTitle}>Comunidad</Text>
@@ -160,17 +161,15 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#f2f4f7' },
   header: {
     backgroundColor: '#fff', paddingHorizontal: 16,
-    paddingTop: 20, paddingBottom: 12,
+    paddingBottom: 12,
     shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 6, elevation: 3,
   },
-  // CAMBIO: headerTop con espacio entre título y logo
   headerTop: {
     flexDirection: 'row', justifyContent: 'space-between',
     alignItems: 'flex-start', marginBottom: 12,
   },
   headerTitle: { fontSize: 24, fontWeight: '800', color: '#111827' },
   headerSub: { fontSize: 12, color: '#9ca3af', marginTop: 2, fontWeight: '500' },
-  // CAMBIO: logo + marca en esquina derecha
   brandRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   logoSquare: {
     width: 32, height: 32, backgroundColor: '#ef4444',

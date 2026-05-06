@@ -3,6 +3,7 @@ import {
   Modal, TextInput, ScrollView, Alert, Image, ActivityIndicator,
 } from 'react-native';
 import { useState, useEffect } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedView } from '@/components/themed-view';
 import {
   getMisEntrenamientos, crearEntrenamiento, eliminarEntrenamiento,
@@ -78,7 +79,6 @@ function EntrenamientoCard({ item, onDelete }: { item: Entrenamiento; onDelete: 
   );
 }
 
-// ── FORMULARIO EJERCICIO ──
 function EjercicioForm({ onAdd }: { onAdd: (e: Ejercicio) => void }) {
   const [nombre,   setNombre]   = useState('');
   const [series,   setSeries]   = useState('3');
@@ -124,6 +124,7 @@ function EjercicioForm({ onAdd }: { onAdd: (e: Ejercicio) => void }) {
 }
 
 export default function WorkoutScreen() {
+  const insets = useSafeAreaInsets();
   const [entrenamientos, setEntrenamientos] = useState<Entrenamiento[]>([]);
   const [loading, setLoading]   = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -181,7 +182,7 @@ export default function WorkoutScreen() {
 
   return (
     <ThemedView style={styles.screen}>
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
         <Text style={styles.headerTitle}>Mis entrenamientos</Text>
         <TouchableOpacity style={styles.addBtn} onPress={() => setShowModal(true)}>
           <Text style={styles.addBtnText}>+ Nuevo</Text>
@@ -207,7 +208,6 @@ export default function WorkoutScreen() {
         />
       )}
 
-      {/* MODAL */}
       <Modal visible={showModal} animationType="slide" onRequestClose={() => setShowModal(false)}>
         <View style={styles.modalScreen}>
           <View style={styles.modalHeader}>
@@ -261,7 +261,6 @@ export default function WorkoutScreen() {
               ))}
             </View>
 
-            {/* Lista ejercicios añadidos */}
             {ejercicios.length > 0 && (
               <View style={styles.ejListPreview}>
                 <Text style={styles.fieldLabel}>Ejercicios añadidos ({ejercicios.length})</Text>
@@ -300,7 +299,7 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#f2f4f7' },
   header: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    backgroundColor: '#fff', paddingHorizontal: 16, paddingTop: 20, paddingBottom: 14,
+    backgroundColor: '#fff', paddingHorizontal: 16, paddingBottom: 14,
     shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 6, elevation: 3,
   },
   headerTitle: { fontSize: 24, fontWeight: '800', color: '#111827' },
