@@ -77,20 +77,25 @@ export default function TrainerScreen() {
   return (
     <ThemedView style={styles.screen}>
 
-      {/* HEADER */}
+      {/* CAMBIO: header estilo "contacto de chat" compacto */}
       <View style={styles.header}>
         <View style={styles.headerRow}>
-          <Image
-            source={require('../../assets/images/logo_GayoFitness.png')}
-            style={styles.logo}
-          />
-          <ThemedText type="title" style={styles.headerTitle}>
-            Gayo Fitness
-          </ThemedText>
+          {/* Avatar compacto en lugar del logo grande 90x90 */}
+          <View style={styles.avatar}>
+            <Image
+              source={require('../../assets/images/logo_GayoFitness.png')}
+              style={styles.avatarImage}
+            />
+          </View>
+          <View style={styles.headerInfo}>
+            <ThemedText style={styles.headerTitle}>Gayo Fitness AI</ThemedText>
+            {/* CAMBIO: indicador de estado "online" */}
+            <View style={styles.onlineRow}>
+              <View style={styles.onlineDot} />
+              <ThemedText style={styles.onlineText}>Activo ahora</ThemedText>
+            </View>
+          </View>
         </View>
-        <ThemedText style={styles.headerSubtitle}>
-          Tu coach fitness personalizado
-        </ThemedText>
       </View>
 
       {/* CHAT */}
@@ -108,7 +113,6 @@ export default function TrainerScreen() {
             key={i}
             style={msg.role === 'user' ? styles.userRow : styles.botRow}
           >
-            {/* 🔥 View normal en lugar de ThemedView */}
             <View
               style={[
                 styles.bubble,
@@ -139,6 +143,7 @@ export default function TrainerScreen() {
           value={chatInput}
           onChangeText={setChatInput}
           placeholder="Pregúntame algo..."
+          placeholderTextColor="#9ca3af"
           style={styles.chatInput}
           onSubmitEditing={handleChatSend}
           returnKeyType="send"
@@ -154,14 +159,30 @@ export default function TrainerScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#f0f2f5' },
+
+  // CAMBIO: header compacto estilo app de mensajería
   header: {
-    paddingTop: 18, paddingHorizontal: 16, paddingBottom: 12,
-    backgroundColor: '#ffffff', borderBottomWidth: 1, borderBottomColor: '#e5e7eb',
+    paddingTop: 18, paddingHorizontal: 16, paddingBottom: 14,
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 1, borderBottomColor: '#e5e7eb',
   },
-  headerRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  logo: { width: 90, height: 90 },
-  headerTitle: { fontSize: 22, fontWeight: '800', color: '#111827' },
-  headerSubtitle: { color: '#9ca3af', marginTop: 2, fontSize: 13, fontWeight: '500' },
+  headerRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  // CAMBIO: avatar cuadrado redondeado compacto en lugar de 90x90
+  avatar: {
+    width: 42, height: 42,
+    backgroundColor: '#ef4444',
+    borderRadius: 13,
+    alignItems: 'center', justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  avatarImage: { width: 42, height: 42, resizeMode: 'contain' },
+  headerInfo: { flex: 1 },
+  headerTitle: { fontSize: 16, fontWeight: '800', color: '#111827' },
+  // CAMBIO: fila con punto verde + texto "Activo ahora"
+  onlineRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 2 },
+  onlineDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: '#22c55e' },
+  onlineText: { fontSize: 12, color: '#22c55e', fontWeight: '600' },
+
   chatArea: { flex: 1 },
   chatContent: { padding: 14, paddingBottom: 160 },
   botRow: { alignItems: 'flex-start', marginBottom: 12 },

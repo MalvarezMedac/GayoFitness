@@ -87,13 +87,30 @@ export default function ProfileScreen() {
 
   const set = (k: string, v: string) => setForm((p) => ({ ...p, [k]: v }));
 
+  // CAMBIO: iniciales del usuario para el avatar
+  const getInitials = (name: string) => {
+    if (!name) return '?';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+    return parts[0].slice(0, 2).toUpperCase();
+  };
+
   if (!user) return null;
 
   return (
     <ThemedView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.inner}>
-        <ThemedText style={styles.title}>Mi perfil</ThemedText>
-        <ThemedText style={styles.email}>{user.email}</ThemedText>
+
+        {/* CAMBIO: header con avatar prominente */}
+        <View style={styles.profileHeader}>
+          <View style={styles.avatarCircle}>
+            <ThemedText style={styles.avatarText}>
+              {getInitials(form.name || user.name || '')}
+            </ThemedText>
+          </View>
+          <ThemedText style={styles.title}>{form.name || user.name || 'Mi perfil'}</ThemedText>
+          <ThemedText style={styles.email}>{user.email}</ThemedText>
+        </View>
 
         <ThemedText style={styles.label}>Nombre</ThemedText>
         <TextInput style={styles.input} value={form.name}
@@ -140,15 +157,12 @@ export default function ProfileScreen() {
           </ThemedText>
         </TouchableOpacity>
 
-        {/* Cerrar sesión */}
         <TouchableOpacity style={styles.logout} onPress={handleLogout}>
           <ThemedText style={styles.logoutText}>Cerrar sesión</ThemedText>
         </TouchableOpacity>
 
-        {/* Separador */}
         <View style={styles.separator} />
 
-        {/* Eliminar cuenta */}
         <TouchableOpacity style={styles.deleteBtn} onPress={handleDeleteAccount}>
           <ThemedText style={styles.deleteText}>🗑️ Eliminar cuenta</ThemedText>
         </TouchableOpacity>
@@ -158,7 +172,6 @@ export default function ProfileScreen() {
 
       </ScrollView>
 
-      {/* Modal de confirmación de borrado */}
       <Modal
         visible={showDeleteModal}
         transparent
@@ -199,18 +212,41 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  inner: { padding: 20, paddingTop: 52, gap: 4 },
-  title: { fontSize: 26, fontWeight: '800', color: '#111827', marginBottom: 2 },
-  email: { color: '#9ca3af', marginBottom: 16, fontSize: 13, fontWeight: '500' },
-  label: { fontSize: 13, fontWeight: '600', color: '#374151', marginBottom: 4, marginTop: 8 },
-  row: { flexDirection: 'row', gap: 12 },
+  inner: { paddingBottom: 40, gap: 4 },
+
+  // CAMBIO: sección de cabecera con avatar prominente
+  profileHeader: {
+    alignItems: 'center',
+    paddingTop: 40,
+    paddingBottom: 24,
+    paddingHorizontal: 20,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+    marginBottom: 8,
+  },
+  avatarCircle: {
+    width: 72, height: 72,
+    borderRadius: 22,
+    backgroundColor: '#ef4444',
+    alignItems: 'center', justifyContent: 'center',
+    marginBottom: 12,
+  },
+  avatarText: { fontSize: 28, fontWeight: '800', color: '#fff' },
+
+  title: { fontSize: 20, fontWeight: '800', color: '#111827', marginBottom: 2 },
+  email: { color: '#9ca3af', fontSize: 13, fontWeight: '500' },
+
+  label: { fontSize: 13, fontWeight: '600', color: '#374151', marginBottom: 4, marginTop: 8, paddingHorizontal: 20 },
+  row: { flexDirection: 'row', gap: 12, paddingHorizontal: 20 },
   half: { flex: 1 },
   input: {
     backgroundColor: '#fff', borderRadius: 12,
     paddingHorizontal: 14, paddingVertical: 12,
     borderWidth: 1, borderColor: '#e5e7eb', fontSize: 15, color: '#111827',
+    marginHorizontal: 20,
   },
-  goals: { flexDirection: 'row', gap: 8, marginTop: 4 },
+  goals: { flexDirection: 'row', gap: 8, marginTop: 4, paddingHorizontal: 20 },
   goalBtn: { flex: 1, padding: 10, borderRadius: 10, backgroundColor: '#fff',
     borderWidth: 1, borderColor: '#e5e7eb', alignItems: 'center' },
   goalActive: { backgroundColor: '#ef4444', borderColor: '#ef4444' },
@@ -218,19 +254,20 @@ const styles = StyleSheet.create({
   goalOff: { color: '#374151', fontSize: 12, fontWeight: '500' },
   btn: {
     backgroundColor: '#ef4444', borderRadius: 12,
-    padding: 15, alignItems: 'center', marginTop: 16,
+    padding: 15, alignItems: 'center', marginTop: 16, marginHorizontal: 20,
   },
   btnText: { color: '#fff', fontWeight: '700', fontSize: 16 },
   logout: { alignItems: 'center', paddingVertical: 14 },
   logoutText: { color: '#6b7280', fontSize: 14, fontWeight: '600' },
-  separator: { height: 1, backgroundColor: '#e5e7eb', marginVertical: 4 },
+  separator: { height: 1, backgroundColor: '#e5e7eb', marginVertical: 4, marginHorizontal: 20 },
   deleteBtn: {
     borderWidth: 1, borderColor: '#fca5a5',
     borderRadius: 12, padding: 14,
     alignItems: 'center', backgroundColor: '#fff5f5',
+    marginHorizontal: 20,
   },
   deleteText: { color: '#dc2626', fontWeight: '700', fontSize: 15 },
-  deleteHint: { textAlign: 'center', color: '#9ca3af', fontSize: 12, marginTop: 6, marginBottom: 24 },
+  deleteHint: { textAlign: 'center', color: '#9ca3af', fontSize: 12, marginTop: 6, marginBottom: 24, paddingHorizontal: 20 },
   modalOverlay: {
     flex: 1, backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center', alignItems: 'center', padding: 24,
